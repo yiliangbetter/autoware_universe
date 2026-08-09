@@ -58,7 +58,7 @@ static_assert(sizeof(CloudPointType) == sizeof(autoware::point_types::PointXYZIR
  */
 void box3d_to_detected_object(
   const Box3D & box3d, const std::vector<std::string> & class_names, bool has_twist,
-  autoware_perception_msgs::msg::DetectedObject & obj);
+  autoware_perception_msgs::msg::DetectedObject & obj); // this is not really google coding style.
 
 /**
  * @brief Map a detection class name to an ObjectClassification label.

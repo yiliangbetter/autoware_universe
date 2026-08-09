@@ -25,7 +25,7 @@ namespace autoware::ptv3
  */
 struct Box3D
 {
-  int label{-1};
+  int label{-1};   // do we need to wrap the data type? float might be different for different platforms.
   float score{0.0f};
   float x{0.0f};
   float y{0.0f};

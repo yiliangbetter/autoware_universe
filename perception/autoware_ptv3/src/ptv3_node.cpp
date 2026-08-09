@@ -51,7 +51,7 @@ PTv3Node::PTv3Node(const rclcpp::NodeOptions & options) : Node("ptv3", options)
 
   // Encoder parameters
   const std::string encoder_onnx_path =
-    this->declare_parameter<std::string>("encoder.onnx_path", descriptor);
+    this->declare_parameter<std::string>("encoder.onnx_path", descriptor); // using initializator list to initialize the parameters.
   const auto encoder_workspace_size = declare_workspace_size("encoder.workspace_size");
   const std::string encoder_engine_path =
     this->declare_parameter<std::string>("encoder.engine_path", descriptor);
@@ -76,8 +76,8 @@ PTv3Node::PTv3Node(const rclcpp::NodeOptions & options) : Node("ptv3", options)
   }
 
   // Segmentation head parameters
-  const bool use_seg3d_head = this->declare_parameter<bool>("segmentation3d.use_head", descriptor);
-  std::optional<tensorrt_common::TrtCommonConfig> seg3d_head_trt_config;
+  const bool use_seg3d_head = this->declare_parameter<bool>("segmentation3d.use_head", descriptor); // use auto whenever it can be used?
+  std::optional<tensorrt_common::TrtCommonConfig> seg3d_head_trt_config{};
   std::vector<std::string> segmentation_class_names;
   std::vector<std::int64_t> palette;
   std::vector<std::string> filter_classes;

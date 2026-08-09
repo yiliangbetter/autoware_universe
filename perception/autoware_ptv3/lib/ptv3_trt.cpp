@@ -299,43 +299,9 @@ void PTv3TRT::createPointFields()
 void PTv3TRT::initEncoderTrt(const tensorrt_common::TrtCommonConfig & trt_config)
 {
   std::vector<autoware::tensorrt_common::NetworkIO> network_io;
-
-  // Inputs
-  network_io.emplace_back("grid_coord", nvinfer1::Dims{2, {-1, 3}}, nvinfer1::DataType::kINT32);
-  network_io.emplace_back("feat", nvinfer1::Dims{2, {-1, 4}}, nvinfer1::DataType::kFLOAT);
-  network_io.emplace_back(
-    "serialized_code", nvinfer1::Dims{2, {2, -1}}, nvinfer1::DataType::kINT64);
-
-  // Outputs: per-encoder-stage point features point_feat_i [N_i, enc_channels[i]],
-  // finest to deepest.
-  for (std::size_t stage = 0; stage < config_.enc_channels_.size(); ++stage) {
-    network_io.emplace_back(
-      stageFeatureName(stage), nvinfer1::Dims{2, {-1, config_.enc_channels_[stage]}},
-      nvinfer1::DataType::kFLOAT);
-  }
-
   std::vector<autoware::tensorrt_common::ProfileDims> profile_dims;
 
-  profile_dims.emplace_back(
-    "grid_coord", nvinfer1::Dims{2, {config_.voxels_num_[0], 3}},
-    nvinfer1::Dims{2, {config_.voxels_num_[1], 3}}, nvinfer1::Dims{2, {config_.voxels_num_[2], 3}});
-
-  profile_dims.emplace_back(
-    "feat", nvinfer1::Dims{2, {config_.voxels_num_[0], 4}},
-    nvinfer1::Dims{2, {config_.voxels_num_[1], 4}}, nvinfer1::Dims{2, {config_.voxels_num_[2], 4}});
-
-  profile_dims.emplace_back(
-    "serialized_code", nvinfer1::Dims{2, {2, config_.voxels_num_[0]}},
-    nvinfer1::Dims{2, {2, config_.voxels_num_[1]}}, nvinfer1::Dims{2, {2, config_.voxels_num_[2]}});
-
-  // Serialized pooling metadata inputs are precomputed on device each frame and fed to the
-  // engine. Cluster tensors are computed too but consumed only by the head engines
-  // (as pooling_cluster_i); the encoder graph does not take them.
-  // In the exported ONNX, indices drive native Gather, indptr drives SegmentCSR, and the remaining
-  // per-stage tensors feed the following PTv3 serialization steps. Their extents are
-  // data-dependent, so they are declared dynamic and bounded by the voxel-count optimization
-  // profile. A pooled (output) count is at most its input count, so all pooled dims are
-  // conservatively bounded by [1, opt, max] voxels.
+  // Declares a dynamic NetworkIO and its [min, opt, max] optimization-profile bounds together.
   const auto add_pooling_io = [&network_io, &profile_dims](
                                 const std::string & name, const nvinfer1::Dims & io_dims,
                                 const nvinfer1::Dims & min_dims, const nvinfer1::Dims & opt_dims,
@@ -350,6 +316,36 @@ void PTv3TRT::initEncoderTrt(const tensorrt_common::TrtCommonConfig & trt_config
   const std::int64_t max_voxels = config_.voxels_num_[2];
   const std::int64_t num_orders = static_cast<std::int64_t>(config_.serialization_orders_.size());
 
+  // Inputs
+  add_pooling_io(
+    "grid_coord", nvinfer1::Dims{2, {-1, 3}}, nvinfer1::Dims{2, {min_voxels, 3}},
+    nvinfer1::Dims{2, {opt_voxels, 3}}, nvinfer1::Dims{2, {max_voxels, 3}},
+    nvinfer1::DataType::kINT32);
+  add_pooling_io(
+    "feat", nvinfer1::Dims{2, {-1, 4}}, nvinfer1::Dims{2, {min_voxels, 4}},
+    nvinfer1::Dims{2, {opt_voxels, 4}}, nvinfer1::Dims{2, {max_voxels, 4}},
+    nvinfer1::DataType::kFLOAT);
+  add_pooling_io(
+    "serialized_code", nvinfer1::Dims{2, {2, -1}}, nvinfer1::Dims{2, {2, min_voxels}},
+    nvinfer1::Dims{2, {2, opt_voxels}}, nvinfer1::Dims{2, {2, max_voxels}},
+    nvinfer1::DataType::kINT64);
+
+  // Outputs: per-encoder-stage point features point_feat_i [N_i, enc_channels[i]],
+  // finest to deepest. Outputs do not need optimization profiles.
+  for (std::size_t stage = 0; stage < config_.enc_channels_.size(); ++stage) {
+    network_io.emplace_back(
+      stageFeatureName(stage), nvinfer1::Dims{2, {-1, config_.enc_channels_[stage]}},
+      nvinfer1::DataType::kFLOAT);
+  }
+
+  // Serialized pooling metadata inputs are precomputed on device each frame and fed to the
+  // engine. Cluster tensors are computed too but consumed only by the head engines
+  // (as pooling_cluster_i); the encoder graph does not take them.
+  // In the exported ONNX, indices drive native Gather, indptr drives SegmentCSR, and the remaining
+  // per-stage tensors feed the following PTv3 serialization steps. Their extents are
+  // data-dependent, so they are declared dynamic and bounded by the voxel-count optimization
+  // profile. A pooled (output) count is at most its input count, so all pooled dims are
+  // conservatively bounded by [1, opt, max] voxels.
   for (std::size_t stage = 0; stage < config_.pooling_strides_.size(); ++stage) {
     const auto prefix = "serialized_pooling_" + std::to_string(stage) + "_";
     // Input-count-sized tensors. Stage 0 consumes the original voxels and therefore shares their

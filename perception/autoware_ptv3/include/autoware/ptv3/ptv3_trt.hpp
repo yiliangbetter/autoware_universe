@@ -169,7 +169,7 @@ protected:
   CudaUniquePtr<float[]> pred_probs_d_{nullptr};
 
   // Detection3D head outputs
-  CudaUniquePtr<float[]> dense_heatmap_d_{nullptr};
+  CudaUniquePtr<float[]> dense_heatmap_d_{nullptr}; // shall we take into consideration that the float would have different precision on different size on different platforms? 
   CudaUniquePtr<float[]> query_heatmap_score_d_{nullptr};
   CudaUniquePtr<std::int64_t[]> query_labels_d_{nullptr};
   CudaUniquePtr<float[]> heatmap_d_{nullptr};

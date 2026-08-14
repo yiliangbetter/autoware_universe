@@ -15777,8 +15777,6 @@
       
         
       
-        
-      
     
     
     
@@ -17741,147 +17739,6 @@
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-      
-    
-    
-    
-      
-      
-        
-          
-          
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_9_14" >
-        
-          
-          <label class="md-nav__link" for="__nav_9_14" id="__nav_9_14_label" tabindex="">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Livox
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_9_14_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_9_14">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Livox
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_9_14_1" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../../livox/autoware_livox_tag_filter/" class="md-nav__link ">
-              
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Autoware livox tag filter
-  
-
-    
-  </span>
-  
-  
-
-            </a>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_9_14_1_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_9_14_1">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Autoware livox tag filter
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
               
             
           </ul>
@@ -23204,6 +23061,27 @@ In particular, this node implements:</p>
 <td>Enable/disable ring outlier filter in the cuda_pointcloud_preprocessor pipeline.</td>
 <td>true</td>
 <td>N/A</td>
+</tr>
+<tr>
+<td>max_input_point_count</td>
+<td>integer</td>
+<td>Maximum number of input points processed per cloud. Larger inputs are reported as errors and truncated to the first N points.</td>
+<td>691200</td>
+<td>≥1</td>
+</tr>
+<tr>
+<td>max_twist_frequency_hz</td>
+<td>float</td>
+<td>Maximum expected twist input frequency. Used with twist_imu_queue_window_sec to bound the twist queue.</td>
+<td>200.0</td>
+<td>&gt;0.0</td>
+</tr>
+<tr>
+<td>max_imu_frequency_hz</td>
+<td>float</td>
+<td>Maximum expected IMU input frequency. Used with twist_imu_queue_window_sec to bound the IMU queue.</td>
+<td>200.0</td>
+<td>&gt;0.0</td>
 </tr>
 <tr>
 <td>crop_box.min_x</td>

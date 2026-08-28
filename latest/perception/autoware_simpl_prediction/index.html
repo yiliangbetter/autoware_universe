@@ -23127,91 +23127,91 @@
 </thead>
 <tbody>
 <tr>
-<td>detector.onnx_path</td>
+<td>detector.<wbr>onnx_<wbr>path</wbr></wbr></td>
 <td>string</td>
 <td>Filepath to ONNX.</td>
-<td>$(var data_path)/simpl.onnx</td>
+<td>$(var data_<wbr>path)/<wbr>simpl.<wbr>onnx</wbr></wbr></wbr></td>
 <td>N/A</td>
 </tr>
 <tr>
-<td>detector.engine_path</td>
+<td>detector.<wbr>engine_<wbr>path</wbr></wbr></td>
 <td>string</td>
 <td>Filepath to TensorRT engine.</td>
-<td>$(var data_path)/simpl.engine</td>
+<td>$(var data_<wbr>path)/<wbr>simpl.<wbr>engine</wbr></wbr></wbr></td>
 <td>N/A</td>
 </tr>
 <tr>
-<td>detector.precision</td>
+<td>detector.<wbr>precision</wbr></td>
 <td>string</td>
 <td>Precision for inference.</td>
 <td>fp16</td>
 <td>['fp32', 'fp16', 'int8']</td>
 </tr>
 <tr>
-<td>preprocess.labels</td>
+<td>preprocess.<wbr>labels</wbr></td>
 <td>array</td>
 <td>An array of label names to be predicted. All of elements must be included in <code>archetype::AgentLabel</code>.</td>
-<td>['VEHICLE', 'PEDESTRIAN', 'MOTORCYCLIST', 'CYCLIST', 'LARGE_VEHICLE']</td>
+<td>["VEHICLE", "PEDESTRIAN", "MOTORCYCLIST", "CYCLIST", "LARGE_<wbr>VEHICLE"]</wbr></td>
 <td>N/A</td>
 </tr>
 <tr>
-<td>preprocess.max_num_agent</td>
+<td>preprocess.<wbr>max_<wbr>num_<wbr>agent</wbr></wbr></wbr></td>
 <td>integer</td>
 <td>Maximum number of agents to be predicted (<span class="arithmatex">\(N\)</span>).</td>
 <td>50</td>
 <td>≥1</td>
 </tr>
 <tr>
-<td>preprocess.num_past</td>
+<td>preprocess.<wbr>num_<wbr>past</wbr></wbr></td>
 <td>integer</td>
 <td>Number of past history for model input (<span class="arithmatex">\(T_{past}\)</span>).</td>
 <td>48</td>
 <td>≥1</td>
 </tr>
 <tr>
-<td>preprocess.max_num_polyline</td>
+<td>preprocess.<wbr>max_<wbr>num_<wbr>polyline</wbr></wbr></wbr></td>
 <td>integer</td>
 <td>Maximum number of polylines (<span class="arithmatex">\(K\)</span>).</td>
 <td>300</td>
 <td>≥1</td>
 </tr>
 <tr>
-<td>preprocess.max_num_point</td>
+<td>preprocess.<wbr>max_<wbr>num_<wbr>point</wbr></wbr></wbr></td>
 <td>integer</td>
 <td>Maximum number of points included in a single polyline (<span class="arithmatex">\(P\)</span>).</td>
 <td>20</td>
 <td>≥1</td>
 </tr>
 <tr>
-<td>preprocess.polyline_range_threshold</td>
+<td>preprocess.<wbr>polyline_<wbr>range_<wbr>threshold</wbr></wbr></wbr></td>
 <td>float</td>
 <td>Distance threshold from the ego vehicle to filter out map polylines [m].</td>
 <td>100.0</td>
 <td>≥1.0</td>
 </tr>
 <tr>
-<td>preprocess.polyline_break_distance</td>
+<td>preprocess.<wbr>polyline_<wbr>break_<wbr>distance</wbr></wbr></wbr></td>
 <td>float</td>
 <td>If the distance of two points is greater than this value they are separated into two polylines [m].</td>
 <td>5.0</td>
 <td>≥1.0</td>
 </tr>
 <tr>
-<td>postprocess.num_mode</td>
+<td>postprocess.<wbr>num_<wbr>mode</wbr></wbr></td>
 <td>integer</td>
 <td>Number of predicted modes for a single agent (<span class="arithmatex">\(M\)</span>).</td>
 <td>6</td>
 <td>≥1</td>
 </tr>
 <tr>
-<td>postprocess.num_future</td>
+<td>postprocess.<wbr>num_<wbr>future</wbr></wbr></td>
 <td>integer</td>
 <td>Number of predicted future time steps (<span class="arithmatex">\(T_{future}\)</span>).</td>
 <td>80</td>
 <td>≥1</td>
 </tr>
 <tr>
-<td>postprocess.score_threshold</td>
+<td>postprocess.<wbr>score_<wbr>threshold</wbr></wbr></td>
 <td>float</td>
 <td>Score threshold to filter predictions.</td>
 <td>0.15</td>
@@ -23223,12 +23223,12 @@
 <p>Now we are preparing a library to train and deploy SIMPL and other ML models featuring motion prediction tasks.</p>
 <h2 id="testing">Testing<a class="headerlink" href="#testing" title="Permanent link">#</a></h2>
 <p>Unit tests are provided and can be run with:</p>
-<p><code>shell
-colcon test --packages-select autoware_simpl
-colcon test-result --all</code></p>
+<div class="highlight"><pre><span></span><code>colcon<span class="w"> </span><span class="nb">test</span><span class="w"> </span>--packages-select<span class="w"> </span>autoware_simpl
+colcon<span class="w"> </span>test-result<span class="w"> </span>--all
+</code></pre></div>
 <p>To print the test's details with while the tests are being run, use the <code>--event-handlers console_cohesion+</code> option to print the details directly to the console:</p>
-<p><code>shell
-colcon test --event-handlers console_cohesion+ --packages-select autoware_simpl</code></p>
+<div class="highlight"><pre><span></span><code>colcon<span class="w"> </span><span class="nb">test</span><span class="w"> </span>--event-handlers<span class="w"> </span>console_cohesion+<span class="w"> </span>--packages-select<span class="w"> </span>autoware_simpl
+</code></pre></div>
 <h2 id="assumptions-known-limits">Assumptions / Known limits<a class="headerlink" href="#assumptions-known-limits" title="Permanent link">#</a></h2>
 <h3 id="agent-to-be-published">Agent to be Published<a class="headerlink" href="#agent-to-be-published" title="Permanent link">#</a></h3>
 <p>Note that only agents whose label is contained in <code>preprocess.labels</code> will be published.</p>

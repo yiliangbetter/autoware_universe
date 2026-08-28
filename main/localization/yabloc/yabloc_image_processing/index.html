@@ -23040,28 +23040,28 @@
 </thead>
 <tbody>
 <tr>
-<td>target_height_ratio</td>
+<td>target_<wbr>height_<wbr>ratio</wbr></wbr></td>
 <td>float</td>
 <td>height on the image to retrieve the candidate road surface</td>
 <td>0.85</td>
 <td>N/A</td>
 </tr>
 <tr>
-<td>target_candidate_box_width</td>
+<td>target_<wbr>candidate_<wbr>box_<wbr>width</wbr></wbr></wbr></td>
 <td>float</td>
 <td>size of the square area to search for candidate road surfaces</td>
 <td>15</td>
 <td>N/A</td>
 </tr>
 <tr>
-<td>pickup_additional_graph_segment</td>
+<td>pickup_<wbr>additional_<wbr>graph_<wbr>segment</wbr></wbr></wbr></td>
 <td>boolean</td>
 <td>if this is true, additional regions of similar color are retrieved</td>
-<td>1</td>
+<td>true</td>
 <td>N/A</td>
 </tr>
 <tr>
-<td>similarity_score_threshold</td>
+<td>similarity_<wbr>score_<wbr>threshold</wbr></wbr></td>
 <td>float</td>
 <td>threshold for picking up additional areas</td>
 <td>0.8</td>
@@ -23078,14 +23078,14 @@
 <td>k</td>
 <td>float</td>
 <td>parameter for cv::ximgproc::segmentation::GraphSegmentation</td>
-<td>300</td>
+<td>300.0</td>
 <td>N/A</td>
 </tr>
 <tr>
-<td>min_size</td>
+<td>min_<wbr>size</wbr></td>
 <td>float</td>
 <td>parameter for cv::ximgproc::segmentation::GraphSegmentation</td>
-<td>100</td>
+<td>100.0</td>
 <td>N/A</td>
 </tr>
 </tbody>
@@ -23161,42 +23161,42 @@
 </thead>
 <tbody>
 <tr>
-<td>min_segment_length</td>
+<td>min_<wbr>segment_<wbr>length</wbr></wbr></td>
 <td>float</td>
 <td>min length threshold (if it is negative, it is unlimited)</td>
 <td>1.5</td>
 <td>N/A</td>
 </tr>
 <tr>
-<td>max_segment_distance</td>
+<td>max_<wbr>segment_<wbr>distance</wbr></wbr></td>
 <td>float</td>
 <td>max distance threshold (if it is negative, it is unlimited)</td>
-<td>30</td>
+<td>30.0</td>
 <td>N/A</td>
 </tr>
 <tr>
-<td>max_lateral_distance</td>
+<td>max_<wbr>lateral_<wbr>distance</wbr></wbr></td>
 <td>float</td>
 <td>max lateral distance threshold (if it is negative, it is unlimited)</td>
-<td>10</td>
+<td>10.0</td>
 <td>N/A</td>
 </tr>
 <tr>
-<td>publish_image_with_segment_for_debug</td>
+<td>publish_<wbr>image_<wbr>with_<wbr>segment_<wbr>for_<wbr>debug</wbr></wbr></wbr></wbr></wbr></td>
 <td>boolean</td>
 <td>toggle whether to publish the filtered line segment for debug</td>
-<td>1</td>
+<td>true</td>
 <td>N/A</td>
 </tr>
 <tr>
-<td>max_range</td>
+<td>max_<wbr>range</wbr></td>
 <td>float</td>
 <td>range of debug projection visualization</td>
-<td>20</td>
+<td>20.0</td>
 <td>N/A</td>
 </tr>
 <tr>
-<td>image_size</td>
+<td>image_<wbr>size</wbr></td>
 <td>float</td>
 <td>image size of debug projection visualization</td>
 <td>800</td>
@@ -23273,10 +23273,10 @@ This is to avoid redundant decompression within Autoware.</p>
 </thead>
 <tbody>
 <tr>
-<td>use_sensor_qos</td>
+<td>use_<wbr>sensor_<wbr>qos</wbr></wbr></td>
 <td>boolean</td>
 <td>whether to use sensor qos or not</td>
-<td>True</td>
+<td>true</td>
 <td>N/A</td>
 </tr>
 <tr>
@@ -23287,7 +23287,7 @@ This is to avoid redundant decompression within Autoware.</p>
 <td>N/A</td>
 </tr>
 <tr>
-<td>override_frame_id</td>
+<td>override_<wbr>frame_<wbr>id</wbr></wbr></td>
 <td>string</td>
 <td>value for overriding the camera's frame_id. if blank, frame_id of static_tf is not overwritten</td>
 <td></td>
@@ -23301,22 +23301,20 @@ This is to avoid redundant decompression within Autoware.</p>
 Some nodes requires `/tf_static` from `/base_link` to the frame_id of `/sensing/camera/traffic_light/image_raw/compressed` (e.g. `/traffic_light_left_camera/camera_optical_link`).
 You can verify that the tf_static is correct with the following command.
 
-```shell
-ros2 run tf2_ros tf2_echo base_link traffic_light_left_camera/camera_optical_link
-```
+<div class="highlight"><pre><span></span><code>ros2<span class="w"> </span>run<span class="w"> </span>tf2_ros<span class="w"> </span>tf2_echo<span class="w"> </span>base_link<span class="w"> </span>traffic_light_left_camera/camera_optical_link
+</code></pre></div>
 
 If the wrong `/tf_static` are broadcasted due to using a prototype vehicle, not having accurate calibration data, or some other unavoidable reason, it is useful to give the frame_id in `override_camera_frame_id`.
 If you give it a non-empty string, `/image_processing/undistort_node` will rewrite the frame_id in camera_info.
 For example, you can give a different tf_static as follows.
 
-```shell
-ros2 launch yabloc_launch sample_launch.xml override_camera_frame_id:=fake_camera_optical_link
-ros2 run tf2_ros static_transform_publisher \
-  --frame-id base_link \
-  --child-frame-id fake_camera_optical_link \
-  --roll -1.57 \
-  --yaw -1.570
-```
+<div class="highlight"><pre><span></span><code>ros2<span class="w"> </span>launch<span class="w"> </span>yabloc_launch<span class="w"> </span>sample_launch.xml<span class="w"> </span>override_camera_frame_id:<span class="o">=</span>fake_camera_optical_link
+ros2<span class="w"> </span>run<span class="w"> </span>tf2_ros<span class="w"> </span>static_transform_publisher<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--frame-id<span class="w"> </span>base_link<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--child-frame-id<span class="w"> </span>fake_camera_optical_link<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--roll<span class="w"> </span>-1.57<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--yaw<span class="w"> </span>-1.570
+</code></pre></div>
 
 </div></details>
 

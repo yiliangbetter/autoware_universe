@@ -105,6 +105,26 @@ bool valid_num_inputs(std::int32_t const num_inputs) noexcept
   return num_inputs >= 5 && num_inputs <= 7;
 }
 
+/// spconv ships INT8 implicit-GEMM kernels for C_in % 32 == 0 and C_out % 32 == 0 only (filters are
+/// [C_out, k, k, k, C_in]); any other width has no algorithm and would fail at the first enqueue.
+constexpr std::int64_t kINT8_CHANNEL_MULTIPLE{32};
+
+bool int8_channels_supported(nvinfer1::Dims const & filters) noexcept
+{
+  return filters.nbDims == 5 && filters.d[0] > 0 && filters.d[4] > 0 &&
+         filters.d[0] % kINT8_CHANNEL_MULTIPLE == 0 && filters.d[4] % kINT8_CHANNEL_MULTIPLE == 0;
+}
+
+std::string int8_channel_refusal(nvinfer1::Dims const & filters)
+{
+  std::string const shape = filters.nbDims == 5 ? "C_in=" + std::to_string(filters.d[4]) +
+                                                    ", C_out=" + std::to_string(filters.d[0])
+                                                : std::to_string(filters.nbDims) + "-D filters";
+  return "INT8 features need C_in and C_out multiples of " +
+         std::to_string(kINT8_CHANNEL_MULTIPLE) + " (spconv has no other INT8 kernel), got " +
+         shape;
+}
+
 }  // namespace
 
 namespace nvinfer1::plugin
@@ -310,6 +330,10 @@ std::int32_t ImplicitGemmPlugin::configurePlugin(
     return -1;
   }
   std::int64_t const c_out = in[INOUT_FILTERS_INDEX].desc.dims.d[0];
+  if (is_int8 && !int8_channels_supported(in[INOUT_FILTERS_INDEX].desc.dims)) {
+    refuse(layer_name_, int8_channel_refusal(in[INOUT_FILTERS_INDEX].desc.dims));
+    return -1;
+  }
 
   if (num_inputs == NUM_PLUGIN_INPUTS_BIAS) {
     PLUGIN_ASSERT(in[INOUT_OPTIONAL_BIAS_INDEX].desc.dims.nbDims == 1);
@@ -369,7 +393,19 @@ bool ImplicitGemmPlugin::supportsFormatCombination(
     // typed build may hand it the QuantizeLinear's input instead of its output.
     case INOUT_IN_FEATURES_INDEX:
       if (params_.has_input_scale != 0) {
-        return type == DataType::kINT8 && num_inputs == NUM_PLUGIN_INPUTS_SCALE_BIAS;
+        if (type != DataType::kINT8 || num_inputs != NUM_PLUGIN_INPUTS_SCALE_BIAS) {
+          return false;
+        }
+        // spconv's INT8 kernels exist for C_in % 32 == 0 and C_out % 32 == 0 only; the filters
+        // are a build-time constant, so refuse here, before TensorRT searches formats.
+        if (!int8_channels_supported(in_out[INOUT_FILTERS_INDEX].desc.dims)) {
+          if (!int8_channel_refusal_logged_) {
+            int8_channel_refusal_logged_ = true;
+            refuse(layer_name_, int8_channel_refusal(in_out[INOUT_FILTERS_INDEX].desc.dims));
+          }
+          return false;
+        }
+        return true;
       }
       return type == DataType::kFLOAT || type == DataType::kHALF;
     // Filter weights share the features' type.

@@ -202,6 +202,8 @@ private:
   void * epilogue_constants_ptr_{nullptr};
   std::int64_t epilogue_constants_c_out_{0};
   bool epilogue_constants_filled_{false};
+  /// supportsFormatCombination is polled many times; the INT8 channel-width refusal is logged once.
+  bool int8_channel_refusal_logged_{false};
 };
 
 }  // namespace nvinfer1::plugin

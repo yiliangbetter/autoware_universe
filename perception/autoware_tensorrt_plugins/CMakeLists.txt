@@ -169,6 +169,25 @@ if(TRT_AVAIL AND CUDA_AVAIL AND SPCONV_AVAIL)
       )
       target_compile_definitions(reference_kernels_test PRIVATE _GLIBCXX_USE_CXX11_ABI=1)
     endif()
+
+    # The ImplicitGemm plugin's ONNX contract (input counts, types, attributes, refusals), checked
+    # through the creator and the IPluginV3OneBuild interface; needs a CUDA device, no engine.
+    ament_add_gtest(implicit_gemm_plugin_contract_test
+      test/implicit_gemm_plugin_contract_test.cpp
+    )
+    if(TARGET implicit_gemm_plugin_contract_test)
+      target_link_libraries(implicit_gemm_plugin_contract_test
+        ${PROJECT_NAME}
+        ${NVINFER}
+        CUDA::cudart
+        spconv::spconv
+      )
+      target_include_directories(implicit_gemm_plugin_contract_test PRIVATE
+        include
+        ${CUDA_INCLUDE_DIRS}
+      )
+      target_compile_definitions(implicit_gemm_plugin_contract_test PRIVATE _GLIBCXX_USE_CXX11_ABI=1)
+    endif()
   endif()
 
   install(
